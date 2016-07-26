@@ -212,11 +212,10 @@ const playVideo = (idx, autoPlay) => {
 	player.src(video);
 	player.poster(videos[idx].thumbnail);
 
-	if(autoPlay) {
+	if(autoPlay || player.options().autoplay) {
 		try {
-				player.play();
-		} catch(e) {
-			console.log(e);
+			player.play();
+		} catch(e) {			
 		}
 	}
 };
@@ -260,7 +259,7 @@ const previousVideo = () => {
  */
 const playlist = function(options) {
   this.ready(() => {
-  	onPlayerReady(this, videojs.mergeOptions(defaults, options));
+		onPlayerReady(this, videojs.mergeOptions(defaults, options));
   });
 };
 
