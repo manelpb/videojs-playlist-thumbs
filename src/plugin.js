@@ -1,25 +1,61 @@
 import videojs from 'video.js';
 
 // Default options for the plugin.
-const defaults = {};
-let current = 0;
+let defaults = {
+	thumbnailSize : 190,
+	playlistItems: 3,
+	hideIcons: false,
+	upNext : true
+};
+
+let currentIdx = 0;
 let videos = [];
 let playlistsElemen = null;
-let prevBtn;
-let nextBtn;
 
+/**
+* creates each video on the playlist
+*/
 const createVideoElement = (idx, title, thumbnail) => {
 	let videoElement = document.createElement("li");
-	videoElement.innerHtml = "<span>"+ title +"</span>"
+	let videoTitle = document.createElement("div");
+	videoTitle.className = "vjs-playlist-video-title";
+
+	if(idx == 0) {
+		if(defaults.upNext) {
+			let upNext = document.createElement("div");
+			upNext.className = "vjs-playlist-video-upnext";
+			upNext.innerText = "UP Next";
+
+			videoTitle.appendChild(upNext);
+		}		
+	}
+
+	if(title) {		
+		let videoTitleText = document.createElement("div");
+		videoTitleText.innerText = title;
+
+		videoTitle.appendChild(videoTitleText);// = "<span>" + title + "</span>";
+
+		videoElement.appendChild(videoTitle);
+	}
+
 	videoElement.style = "background-image: url('"+ thumbnail +"');";
 	videoElement.setAttribute("data-index", idx);
 
+	// when the user clicks on the playlist, the video will start playing
 	videoElement.onclick = function(ev) {
 		var idx = parseInt(ev.target.getAttribute("data-index"));
 
-		playVideo(idx, true);
+		// updates the list and everything before this index should be moved to the end
+		let videosBefore = videos.splice(0, idx);
 
-		console.log(idx);
+		videosBefore.map(function(video) {
+			// adds to the end of the array
+			videos.push(video);
+		});
+
+		// and play this video
+		updatePlaylistAndPlay(true);
 	};
 
 	return videoElement;
@@ -39,43 +75,81 @@ const createVideoElement = (idx, title, thumbnail) => {
 const onPlayerReady = (player, options) => {
 	videos = options.videos;
 
-	createElements(player);
+	if(options.playlist && options.playlist.thumbnailSize) {
+		defaults.thumbnailSize = options.playlist.thumbnailSize.toString().replace("px", "");
+	}
+
+	if(options.playlist && options.playlist.items) {
+		defaults.playlistItems = options.playlist.items;
+	}
+
+	if(options.playlist && options.playlist.hideIcons) {
+		defaults.hideIcons = options.playlist.hideIcons;
+	}
+
+	createElements(player, options);
   updateElementWidth(player);
+};
+
+const updatePlaylistAndPlay = (autoplay) => {
+	// plays the first video on the playlist
+	playVideo(0, autoplay);
+
+	// and move this video to the end of the playlist
+	let first = videos.splice(0, 1);
+	
+	// then add at the end of the array
+	videos.push(first[0]);
+
+	// clean the playlist
+	while (playlistsElemen.firstChild) {
+	    playlistsElemen.removeChild(playlistsElemen.firstChild);
+	}
+	
+	// add each video on the playlist
+	videos.map(function(video, idx) {
+		playlistsElemen.appendChild(createVideoElement(idx, video.title, video.thumbnail));
+	});
 };
 
 /**
 * Creates the root html elements for the playlist
 */
-const createElements = (player) => {
-	let playerId = player.el().id;
-
+const createElements = (player, options) => {
+	// creates the playlist items and add on the video player
 	playlistsElemen = document.createElement("ul");
-	playlistsElemen.className = "vjs-playlist-items";
-
+	playlistsElemen.className = "vjs-playlist-items";	
 	player.el().appendChild(playlistsElemen);
 
-	videos.map(function(video, idx) {
-		playlistsElemen.appendChild(createVideoElement(idx, video.title, video.thumbnail));
-	});
-
+	// plays the first video
 	if(videos.length > 0) {
-		playVideo(0);
+		updatePlaylistAndPlay(false);
 	}
 
 	// create next and previous button
-	prevBtn = document.createElement("button");
-	prevBtn.className = "vjs-button-prev";
-	prevBtn.onclick = onPrevClick;
+	if(!defaults.hideIcons) {
+		let prevBtn = document.createElement("button");
+		prevBtn.className = "vjs-button-prev";
+		prevBtn.onclick = onPrevClick;
 
-	player.controlBar.el().insertBefore(prevBtn, player.controlBar.playToggle.el());
+		player.controlBar.el().insertBefore(prevBtn, player.controlBar.playToggle.el());
 
-	nextBtn = document.createElement("button");
-	nextBtn.className = "vjs-button-next";
-	nextBtn.onclick = onNextClick;
+		let nextBtn = document.createElement("button");
+		nextBtn.className = "vjs-button-next";
+		nextBtn.onclick = onNextClick;
 
-	player.controlBar.el().insertBefore(nextBtn, player.controlBar.volumeMenuButton.el());
+		player.controlBar.el().insertBefore(nextBtn, player.controlBar.volumeMenuButton.el());
+	}
 
+	// creates the loading next on video ends
+	player.on("ended", createPlayingNext);
+
+	// adds the main class on the player
   player.addClass('vjs-playlist');
+};
+
+const createPlayingNext = () => {
+	nextVideo();
 };
 
 const onNextClick = (ev) => {
@@ -91,29 +165,34 @@ const onPrevClick = (ev) => {
 */
 const updateElementWidth = (player) => {
 	let resize = function(p) {	
-		let playlistWidth = playlistsElemen.offsetWidth;
+		let itemWidth = defaults.thumbnailSize;
+
 		let playerWidth = p.el().offsetWidth;
+		let playerHeight = p.el().offsetHeight;
+		let itemHeight = Math.round(playerHeight / defaults.playlistItems);
+
 		let youtube = p.$(".vjs-tech");
-		let newSize = playerWidth - playlistWidth;
-		let controllers = player.$(".vjs-control-bar");
-		let modals = player.$(".vjs-modal-dialog");
-		let buttoms = player.$(".vjs-big-play-button");
-
-		player.$(".vjs-big-play-button").style = "margin-left: -110px";
-		player.$(".vjs-loading-spinner").style = "margin-left: -90px";
-
-		/*var innerElemnts = player.children();
-		innerElemnts.map(function(item) {
-			item.style = "width: " + newSize + "px !important";
-		});*/
+		let newSize = playerWidth - itemWidth;
 
 		if(newSize >= 0) {
-			modals.style = 
-				controllers.style = 
-					youtube.style = "width: " + newSize + "px !important";
-		}
+		  let style = document.createElement('style');
+		  let def = ' ' +
+		    '.vjs-playlist .vjs-poster { width: '+ newSize +'px !important; }' +
+		    '.vjs-playlist .vjs-playlist-items { width: '+ itemWidth +'px !important; }'+
+		    '.vjs-playlist .vjs-playlist-items li { width: '+ itemWidth +'px !important; height: '+ itemHeight +'px !important; }' +
+		    '.vjs-playlist .vjs-modal-dialog { width: '+ newSize +'px !important; } ' + 
+		    '.vjs-playlist .vjs-control-bar { width: '+ newSize +'px !important; } ' + 
+		    '.vjs-playlist .vjs-big-play-button, .vjs-playlist .vjs-loading-spinner { left: '+ Math.round(newSize/2) +'px !important; } ';
 
-		console.log(newSize, playlistWidth);
+		  style.setAttribute('type', 'text/css');
+		  document.getElementsByTagName('head')[0].appendChild(style);
+
+		  if(style.styleSheet) {
+	      style.styleSheet.cssText = def;
+	    } else {
+	      style.appendChild(document.createTextNode(def));
+	    }
+		}
 	};
 
 	window.onresize = function() {
@@ -125,6 +204,9 @@ const updateElementWidth = (player) => {
 	}
 };
 
+/**
+* plays the video based on an index
+*/
 const playVideo = (idx, autoPlay) => {
 	let video = { type: videos[idx].type, src: videos[idx].src};
 	player.src(video);
@@ -139,26 +221,29 @@ const playVideo = (idx, autoPlay) => {
 	}
 };
 
+/**
+* plays the next video, if it comes to the end, loop 
+*/
 const nextVideo = () => {
-	if(current < videos.length) {
-		current++;
+	if(currentIdx < videos.length) {
+		currentIdx++;
 	} else {
-		current = 0;
+		currentIdx = 0;
 	}
 
-	console.log(current);
-	playVideo(current, true);
+	updatePlaylistAndPlay(true);
 };
 
+/**
+* plays the previous video, if it comes to the first video, loop
+*/
 const previousVideo = () => {
-	if(current > 0) {
-		current--;
+	if(currentIdx > 0) {
+		currentIdx--;
 	} else {
-		current = videos.length - 1;
+		currentIdx = videos.length - 1;
 	}
-
-	console.log(current);
-	playVideo(current, true);
+	playVideo(currentIdx, true);
 };
 
 /**

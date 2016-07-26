@@ -10,7 +10,7 @@
   <style>
     .video-js {
       width: 100%;
-      height: 350px;
+      height: 450px;
     }
   </style>
 
@@ -32,31 +32,31 @@
         {
           "src" : "https://www.youtube.com/watch?v=fk4BbF7B29w",
           "type": "video/youtube",
-          "title": "Abde",
+          "title": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
           "thumbnail": "https://i.ytimg.com/vi/fk4BbF7B29w/hqdefault.jpg"
         },
         {
           "src" : "http://vjs.zencdn.net/v/oceans.mp4",
           "type": "video/mp4",
-          "title": "Abde",
-          "thumbnail": "https://i.ytimg.com/vi/_wYtG7aQTHA/hqdefault.jpg"
+          "title": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+          "thumbnail": "https://i.ytimg.com/vi/nmcdLOjGVzw/hqdefault.jpg"
         },
         {
-          "src" : "https://www.youtube.com/watch?v=pT68FS3YbQ4",
+          "src" : "https://www.youtube.com/watch?v=_gMq3hRLDD0",
           "type": "video/youtube",
-          "title": "Abde",
-          "thumbnail": "https://i.ytimg.com/vi/pT68FS3YbQ4/hqdefault.jpg"
+          "title": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+          "thumbnail": "https://i.ytimg.com/vi/_gMq3hRLDD0/hqdefault.jpg"
         },
         {
-          "src" : "https://www.youtube.com/watch?v=fk4BbF7B29w",
+          "src" : "https://www.youtube.com/watch?v=_wYtG7aQTHA",
           "type": "video/youtube",
-          "title": "Abde",
+          "title": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
           "thumbnail": "https://i.ytimg.com/vi/_wYtG7aQTHA/hqdefault.jpg"
         }
       ];
 
       var player = window.player = videojs('videojs-playlist-player', { techOrder: ["youtube", "html5"], controls: true});
-      player.playlist({ videos: playlist });
+      player.playlist({ videos: playlist, playlist : { upNext: true, hideIcons: false, thumbnailSize: 300, items: 3 } });
     }(window, window.videojs));
   </script>
 </body>
