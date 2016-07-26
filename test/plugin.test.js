@@ -46,7 +46,7 @@ QUnit.test('registers itself with video.js', function(assert) {
     'videojs-playlist plugin was registered'
   );
 
-  this.player.playlist();
+  this.player.playlist({ videos: [], playlist : {} });
 
   // Tick the clock forward enough to trigger the player to be "ready".
   this.clock.tick(1);
