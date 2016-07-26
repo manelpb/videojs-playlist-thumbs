@@ -1,6 +1,6 @@
 {
   "name": "videojs-playlist-thumbs",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Continous play videos with thumbnail and looping",
   "main": "es5/plugin.js",
   "scripts": {
@@ -29,6 +29,10 @@
     "version": "babel-node scripts/version.js",
     "postversion": "babel-node scripts/postversion.js",
     "prepublish": "npm run build"
+  },
+  "repository" :
+  { "type" : "git"
+  , "url" : "https://github.com/manelpb/videojs-playlist-thumbs.git"
   },
   "keywords": [
     "videojs",

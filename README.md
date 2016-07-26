@@ -20,11 +20,12 @@ This is the simplest case. Get the script in whatever way you prefer and include
 
 ```html
 <script src="//path/to/video.min.js"></script>
+<script src="//path/to/videojs-youtube/dist/Youtube.js"></script>
 <script src="//path/to/videojs-playlist.min.js"></script>
 <link href="//path/to/videojs-playlist.css" rel="stylesheet">
 
 <script>
-  var player = videojs('my-video');
+  var player = videojs('my-video', { preload: true, techOrder: ["youtube", "html5"], controls: true});
   var videosList = [
   	{
       "src" : "https://www.youtube.com/watch?v=fk4BbF7B29w",
