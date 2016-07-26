@@ -1,0 +1,67 @@
+// Sass for videojs-playlist
+
+.video-js {
+
+	position: relative;
+
+	.vjs-big-play-button {
+  	top: 50%;
+    left: 50%;
+    margin-left: -50px;
+    margin-top: -20px;
+  }
+
+  // This class is added to the video.js element by the plugin by default.
+  &.vjs-playlist {
+    display: block;
+  }
+
+  .vjs-button-prev, .vjs-button-next {
+  	cursor: pointer;
+  	font-size: 15px;
+    margin-bottom: 2px;
+    font-weight: bold;
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+
+  .vjs-button-prev:before {
+  	content: "<<";
+  }
+
+  .vjs-button-next:before {
+  	content: ">>";
+  }
+
+  .vjs-tech {
+  	width: 80% !important;
+  }
+
+  .vjs-control-bar {
+  	width: 80% !important;
+  }
+
+  .vjs-poster {
+  	margin-right: 190px;
+  }
+
+  .vjs-playlist-items {
+  	border: 1px solid red;
+  	width: 190px;
+  	height: 100%;
+  	position: absolute;
+  	right: 0;
+  	overflow: scroll;
+  	margin: 0;
+  	padding: 0;
+  }
+
+  .vjs-playlist-items li {
+  	background-size: cover;
+  	height: 120px;
+  }
+
+  .vjs-playlist-items li:hover {
+  	cursor: pointer;
+  }
+}

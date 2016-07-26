@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>videojs-playlist Demo</title>
+  <link href="/node_modules/video.js/dist/video-js.css" rel="stylesheet">
+  <link href="/dist/videojs-playlist.css" rel="stylesheet">
+
+
+  <style>
+    .video-js {
+      width: 100%;
+      height: 350px;
+    }
+  </style>
+
+</head>
+<body>
+  <video id="videojs-playlist-player" class="video-js vjs-default-skin" controls>     
+  </video>
+  
+  <ul>
+    <li><a href="/test/">Run unit tests in browser.</a></li>
+    
+  </ul>
+  <script src="/node_modules/video.js/dist/video.js"></script>
+  <script src="/node_modules/videojs-youtube/dist/Youtube.js"></script>
+  <script src="/dist/videojs-playlist.js"></script>
+  <script>
+    (function(window, videojs) {
+      var playlist = [
+        {
+          "src" : "https://www.youtube.com/watch?v=fk4BbF7B29w",
+          "type": "video/youtube",
+          "title": "Abde",
+          "thumbnail": "https://i.ytimg.com/vi/fk4BbF7B29w/hqdefault.jpg"
+        },
+        {
+          "src" : "http://vjs.zencdn.net/v/oceans.mp4",
+          "type": "video/mp4",
+          "title": "Abde",
+          "thumbnail": "https://i.ytimg.com/vi/_wYtG7aQTHA/hqdefault.jpg"
+        },
+        {
+          "src" : "https://www.youtube.com/watch?v=pT68FS3YbQ4",
+          "type": "video/youtube",
+          "title": "Abde",
+          "thumbnail": "https://i.ytimg.com/vi/pT68FS3YbQ4/hqdefault.jpg"
+        },
+        {
+          "src" : "https://www.youtube.com/watch?v=fk4BbF7B29w",
+          "type": "video/youtube",
+          "title": "Abde",
+          "thumbnail": "https://i.ytimg.com/vi/_wYtG7aQTHA/hqdefault.jpg"
+        }
+      ];
+
+      var player = window.player = videojs('videojs-playlist-player', { techOrder: ["youtube", "html5"], controls: true});
+      player.playlist({ videos: playlist });
+    }(window, window.videojs));
+  </script>
+</body>
+</html>

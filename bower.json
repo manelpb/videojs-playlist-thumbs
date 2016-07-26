@@ -1,0 +1,14 @@
+{
+  "name": "videojs-playlist",
+  "author": "Emmanuel Alves &lt;manel.pb@gmail.com&gt;",
+  "license": "MIT",
+  "main": [
+    "dist/videojs-playlist.css",
+    "dist/videojs-playlist.min.js"
+  ],
+  "keywords": [
+    "videojs",
+    "videojs-plugin"
+  ]
+}
+
