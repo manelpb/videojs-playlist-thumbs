@@ -2,6 +2,8 @@
 
 Continous plays videos and display the list on a sidebar with thumbnail and title 
 
+![alt tag](https://raw.githubusercontent.com/manelpb/videojs-playlist-thumbs/master/screenshot.png)
+
 ## Installation
 
 ```sh
