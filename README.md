@@ -1,17 +1,11 @@
-# videojs-playlist
+# videojs-playlist-thumbs
 
-Continous plays with thumbnail for the following videos
+Continous plays videos and display the list on a sidebar with thumbnail and title 
 
 ## Installation
 
 ```sh
-npm install --save videojs-playlist
-```
-
-The npm installation is preferred, but Bower works, too.
-
-```sh
-bower install  --save videojs-playlist
+npm install --save videojs-playlist-thumbs
 ```
 
 ## Usage
@@ -25,45 +19,90 @@ This is the simplest case. Get the script in whatever way you prefer and include
 ```html
 <script src="//path/to/video.min.js"></script>
 <script src="//path/to/videojs-playlist.min.js"></script>
+<link href="//path/to/videojs-playlist.css" rel="stylesheet">
+
 <script>
   var player = videojs('my-video');
+  var videosList = [
+  	{
+      "src" : "https://www.youtube.com/watch?v=fk4BbF7B29w",
+      "type": "video/youtube",
+      "title": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      "thumbnail": "https://i.ytimg.com/vi/fk4BbF7B29w/hqdefault.jpg"
+    },
+    {
+      "src" : "https://www.youtube.com/watch?v=_gMq3hRLDD0",
+      "type": "video/youtube",
+      "title": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      "thumbnail": "https://i.ytimg.com/vi/_gMq3hRLDD0/hqdefault.jpg"
+    }
+  ];
 
-  player.playlist();
+  player.playlist({ videos: videosList, playlist: { hideSidebar: false, upNext: true, hideIcons: false, thumbnailSize: 300, items: 3 } });
 </script>
 ```
 
-### Browserify
+## Documentation
 
-When using with Browserify, install videojs-playlist via npm and `require` the plugin as you would any other module.
+### videos
 
-```js
-var videojs = require('video.js');
+You should pass an array of objects with the following structure
 
-// The actual plugin function is exported by this module, but it is also
-// attached to the `Player.prototype`; so, there is no need to assign it
-// to a variable.
-require('videojs-playlist');
-
-var player = videojs('my-video');
-
-player.playlist();
+```
+var playlist = [
+        {
+          "src" : "https://www.youtube.com/watch?v=fk4BbF7B29w",
+          "type": "video/youtube",
+          "title": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+          "thumbnail": "https://i.ytimg.com/vi/fk4BbF7B29w/hqdefault.jpg"
+        },
+        {
+          "src" : "http://vjs.zencdn.net/v/oceans.mp4",
+          "type": "video/mp4",
+          "title": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+          "thumbnail": "https://i.ytimg.com/vi/nmcdLOjGVzw/hqdefault.jpg"
+        },
+        {
+          "src" : "https://www.youtube.com/watch?v=_gMq3hRLDD0",
+          "type": "video/youtube",
+          "title": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+          "thumbnail": "https://i.ytimg.com/vi/_gMq3hRLDD0/hqdefault.jpg"
+        },
+        {
+          "src" : "https://www.youtube.com/watch?v=_wYtG7aQTHA",
+          "type": "video/youtube",
+          "title": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+          "thumbnail": "https://i.ytimg.com/vi/_wYtG7aQTHA/hqdefault.jpg"
+        }
+      ];
 ```
 
-### RequireJS/AMD
+### playlist options
 
-When using with RequireJS (or another AMD library), get the script in whatever way you prefer and `require` the plugin as you normally would:
+#### hideSidebar
 
-```js
-require(['video.js', 'videojs-playlist'], function(videojs) {
-  var player = videojs('my-video');
+It just hides the side bar, but the playlist keeps working
 
-  player.playlist();
-});
-```
+#### upNext
+
+Shows a legend on the first video of the list
+
+#### hideIcons
+
+Hides the buttons (next/prev) on the control bar
+
+#### thumbnailSize
+
+Size of the video thumbnail on the sidebar
+
+#### items
+
+Number of videos on the sidebar 
+
 
 ## License
 
-MIT. Copyright (c) Emmanuel Alves &lt;manel.pb@gmail.com&gt;
+MIT. Copyright (c) Emmanuel Alves / http://github.com/manelpb
 
 
 [videojs]: http://videojs.com/

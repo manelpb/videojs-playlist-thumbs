@@ -1,7 +1,7 @@
 {
-  "name": "videojs-playlist",
-  "version": "0.0.1",
-  "description": "Continous plays with thumbnail for the following videos",
+  "name": "videojs-playlist-thumbs",
+  "version": "0.1.1",
+  "description": "Continous play videos with thumbnail and looping",
   "main": "es5/plugin.js",
   "scripts": {
     "prebuild": "npm run clean",

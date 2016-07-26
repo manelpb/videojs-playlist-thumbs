@@ -5,7 +5,8 @@ let defaults = {
 	thumbnailSize : 190,
 	playlistItems: 3,
 	hideIcons: false,
-	upNext : true
+	upNext : true,
+	hideSidebar : false
 };
 
 let currentIdx = 0;
@@ -87,6 +88,10 @@ const onPlayerReady = (player, options) => {
 		defaults.hideIcons = options.playlist.hideIcons;
 	}
 
+	if(options.playlist && options.playlist.hideSidebar) {
+		defaults.hideSidebar = options.playlist.hideSidebar;
+	}
+
 	createElements(player, options);
   updateElementWidth(player);
 };
@@ -119,7 +124,10 @@ const createElements = (player, options) => {
 	// creates the playlist items and add on the video player
 	playlistsElemen = document.createElement("ul");
 	playlistsElemen.className = "vjs-playlist-items";	
-	player.el().appendChild(playlistsElemen);
+
+	if(!defaults.hideSidebar) {
+		player.el().appendChild(playlistsElemen);
+	}
 
 	// plays the first video
 	if(videos.length > 0) {
@@ -181,7 +189,7 @@ const updateElementWidth = (player) => {
 		    '.vjs-playlist .vjs-playlist-items { width: '+ itemWidth +'px !important; }'+
 		    '.vjs-playlist .vjs-playlist-items li { width: '+ itemWidth +'px !important; height: '+ itemHeight +'px !important; }' +
 		    '.vjs-playlist .vjs-modal-dialog { width: '+ newSize +'px !important; } ' + 
-		    '.vjs-playlist .vjs-control-bar { width: '+ newSize +'px !important; } ' + 
+		    '.vjs-playlist .vjs-control-bar, .vjs-playlist .vjs-tech { width: '+ newSize +'px !important; } ' + 
 		    '.vjs-playlist .vjs-big-play-button, .vjs-playlist .vjs-loading-spinner { left: '+ Math.round(newSize/2) +'px !important; } ';
 
 		  style.setAttribute('type', 'text/css');
@@ -195,12 +203,14 @@ const updateElementWidth = (player) => {
 		}
 	};
 
-	window.onresize = function() {
-		resize(player);
-	};
+	if(!defaults.hideSidebar) {
+		window.onresize = function() {
+			resize(player);
+		};
 
-	if(player) {
-		resize(player);
+		if(player) {
+			resize(player);
+		}
 	}
 };
 

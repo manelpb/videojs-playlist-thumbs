@@ -56,7 +56,7 @@
       ];
 
       var player = window.player = videojs('videojs-playlist-player', { preload: true, techOrder: ["youtube", "html5"], controls: true});
-      player.playlist({ videos: playlist, playlist : { upNext: true, hideIcons: false, thumbnailSize: 300, items: 3 } });
+      player.playlist({ videos: playlist, playlist : { hideSidebar: false, upNext: true, hideIcons: false, thumbnailSize: 300, items: 3 } });
     }(window, window.videojs));
   </script>
 </body>
