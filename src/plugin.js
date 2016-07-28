@@ -9,6 +9,7 @@ let defaults = {
 	hideSidebar : false
 };
 
+let player;
 let currentIdx = 0;
 let videos = [];
 let playlistsElemen = null;
@@ -93,12 +94,12 @@ const onPlayerReady = (player, options) => {
 	}
 
 	createElements(player, options);
-  updateElementWidth(player);
+  	updateElementWidth(player);
 };
 
 const updatePlaylistAndPlay = (autoplay) => {
 	// plays the first video on the playlist
-	playVideo(0, autoplay);
+	playVideo(0, autoplay); 
 
 	// and move this video to the end of the playlist
 	let first = videos.splice(0, 1);
@@ -219,10 +220,11 @@ const updateElementWidth = (player) => {
 */
 const playVideo = (idx, autoPlay) => {
 	let video = { type: videos[idx].type, src: videos[idx].src};
+
 	player.src(video);
 	player.poster(videos[idx].thumbnail);
 
-	if(autoPlay || player.options().autoplay) {
+	if(autoPlay || player.options_.autoplay) {
 		try {
 			player.play();
 		} catch(e) {			
@@ -269,6 +271,7 @@ const previousVideo = () => {
  */
 const playlist = function(options) {
   this.ready(() => {
+  		player = this;
 		onPlayerReady(this, videojs.mergeOptions(defaults, options));
   });
 };
