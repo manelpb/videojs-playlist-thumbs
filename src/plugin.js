@@ -41,7 +41,7 @@ const createVideoElement = (idx, title, thumbnail) => {
 		videoElement.appendChild(videoTitle);
 	}
 
-	videoElement.style = "background-image: url('"+ thumbnail +"');";
+	videoElement.setAttribute("style", "background-image: url('"+ thumbnail +"');");
 	videoElement.setAttribute("data-index", idx);
 
 	// when the user clicks on the playlist, the video will start playing
