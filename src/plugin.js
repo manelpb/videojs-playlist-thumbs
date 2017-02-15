@@ -10,14 +10,16 @@ let defaults = {
 };
 
 let player;
-let currentIdx = 0;
+let currentIdx = [];
 let videos = [];
 let playlistsElemen = null;
+let players = [];
+let playlistsElemens = [];
 
 /**
 * creates each video on the playlist
 */
-const createVideoElement = (idx, title, thumbnail) => {
+const createVideoElement = (player_id, idx, title, thumbnail) => {
 	let videoElement = document.createElement("li");
 	let videoTitle = document.createElement("div");
 	videoTitle.className = "vjs-playlist-video-title";
@@ -49,15 +51,15 @@ const createVideoElement = (idx, title, thumbnail) => {
 		var idx = parseInt(ev.target.getAttribute("data-index"));
 
 		// updates the list and everything before this index should be moved to the end
-		let videosBefore = videos.splice(0, idx);
+		let videosBefore = videos[player_id].splice(0, idx);
 
 		videosBefore.map(function(video) {
 			// adds to the end of the array
-			videos.push(video);
+			videos[player_id].push(video);
 		});
 
 		// and play this video
-		updatePlaylistAndPlay(true);
+		updatePlaylistAndPlay(player_id, true);
 	};
 
 	return videoElement;
@@ -75,7 +77,8 @@ const createVideoElement = (idx, title, thumbnail) => {
  * @param    {Object} [options={}]
  */
 const onPlayerReady = (player, options) => {
-	videos = options.videos;
+	videos[player.id_] = options.videos;
+	currentIdx[player.id_] = 0;
 
 	if(options.playlist && options.playlist.thumbnailSize) {
 		defaults.thumbnailSize = options.playlist.thumbnailSize.toString().replace("px", "");
@@ -97,24 +100,29 @@ const onPlayerReady = (player, options) => {
   	updateElementWidth(player);
 };
 
-const updatePlaylistAndPlay = (autoplay) => {
+const updatePlaylistAndPlay = (player_id, autoplay) => {
+	
+	if (!player_id)	{
+		player_id = player.id_;
+	}
+
 	// plays the first video on the playlist
-	playVideo(0, autoplay); 
+	playVideo(player_id, 0, autoplay); 
 
 	// and move this video to the end of the playlist
-	let first = videos.splice(0, 1);
+	let first = videos[player_id].splice(0, 1);
 	
 	// then add at the end of the array
-	videos.push(first[0]);
+	videos[player_id].push(first[0]);
 
 	// clean the playlist
-	while (playlistsElemen.firstChild) {
-	    playlistsElemen.removeChild(playlistsElemen.firstChild);
+	while (playlistsElemens[player_id].firstChild) {
+	    playlistsElemens[player_id].removeChild(playlistsElemens[player_id].firstChild);
 	}
 	
 	// add each video on the playlist
 	videos.map(function(video, idx) {
-		playlistsElemen.appendChild(createVideoElement(idx, video.title, video.thumbnail));
+		playlistsElemens[player_id].appendChild(createVideoElement(player_id, idx, video.title, video.thumbnail));
 	});
 };
 
@@ -162,11 +170,13 @@ const createPlayingNext = () => {
 };
 
 const onNextClick = (ev) => {
-	nextVideo();
+	var player_id = ev.target.parentNode.parentNode.id;
+	nextVideo(player_id);
 };
 
 const onPrevClick = (ev) => {
-	previousVideo();
+	var player_id = ev.target.parentNode.parentNode.id;
+	previousVideo(player_id);
 };
 
 /**
@@ -218,15 +228,18 @@ const updateElementWidth = (player) => {
 /**
 * plays the video based on an index
 */
-const playVideo = (idx, autoPlay) => {
-	let video = { type: videos[idx].type, src: videos[idx].src};
+const playVideo = (player_id, idx, autoPlay) => {
+	if (!player_id)	{
+		player_id = player.id_;
+	}
+	let video = { type: videos[player_id][idx].type, src: videos[player_id][idx].src};
 
-	player.src(video);
-	player.poster(videos[idx].thumbnail);
+	players[player_id].src(video);
+	players[player_id].poster(videos[player_id][idx].thumbnail);
 
-	if(autoPlay || player.options_.autoplay) {
+	if(autoPlay || players[player_id].options_.autoplay) {
 		try {
-			player.play();
+			players[player_id].play();
 		} catch(e) {			
 		}
 	}
@@ -235,11 +248,14 @@ const playVideo = (idx, autoPlay) => {
 /**
 * plays the next video, if it comes to the end, loop 
 */
-const nextVideo = () => {
-	if(currentIdx < videos.length) {
-		currentIdx++;
+const nextVideo = (player_id) => {
+	if (!player_id)	{
+		player_id = player.id_;
+	}
+	if(currentIdx[player_id] < videos[player_id].length) {
+		currentIdx[player_id]++;
 	} else {
-		currentIdx = 0;
+		currentIdx[player_id] = 0;
 	}
 
 	updatePlaylistAndPlay(true);
@@ -248,13 +264,16 @@ const nextVideo = () => {
 /**
 * plays the previous video, if it comes to the first video, loop
 */
-const previousVideo = () => {
-	if(currentIdx > 0) {
-		currentIdx--;
-	} else {
-		currentIdx = videos.length - 1;
+const previousVideo = (player_id) => {
+	if (!player_id)	{
+		player_id = player.id_;
 	}
-	playVideo(currentIdx, true);
+	if(currentIdx[player_id] > 0) {
+		currentIdx[player_id]--;
+	} else {
+		currentIdx[player_id] = videos.length - 1;
+	}
+	playVideo(player_id, currentIdx[player_id], true);
 };
 
 /**
@@ -272,6 +291,7 @@ const previousVideo = () => {
 const playlist = function(options) {
   this.ready(() => {
   		player = this;
+  		players[player.id_] = player;
 		onPlayerReady(this, videojs.mergeOptions(defaults, options));
   });
 };
