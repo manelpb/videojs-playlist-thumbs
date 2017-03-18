@@ -193,15 +193,18 @@ const updateElementWidth = (player) => {
 		let youtube = p.$(".vjs-tech");
 		let newSize = playerWidth - itemWidth;
 
+		let playerId = p.el().id;
+
 		if(newSize >= 0) {
 		  let style = document.createElement('style');
-		  let def = ' ' +
-		    '.vjs-playlist .vjs-poster { width: '+ newSize +'px !important; }' +
-		    '.vjs-playlist .vjs-playlist-items { width: '+ itemWidth +'px !important; }'+
-		    '.vjs-playlist .vjs-playlist-items li { width: '+ itemWidth +'px !important; height: '+ itemHeight +'px !important; }' +
-		    '.vjs-playlist .vjs-modal-dialog { width: '+ newSize +'px !important; } ' + 
-		    '.vjs-playlist .vjs-control-bar, .vjs-playlist .vjs-tech { width: '+ newSize +'px !important; } ' + 
-		    '.vjs-playlist .vjs-big-play-button, .vjs-playlist .vjs-loading-spinner { left: '+ Math.round(newSize/2) +'px !important; } ';
+		  let def = ' #' + playerId + '.vjs-playlist .vjs-poster { width: ' + newSize + 'px !important; }' +
+			' #' + playerId + '.vjs-playlist .vjs-playlist-items { width: ' + itemWidth + 'px !important; }' +
+			' #' + playerId + '.vjs-playlist .vjs-playlist-items li { width: ' + itemWidth + 'px !important; height: ' + itemHeight + 'px !important; }' +
+			' #' + playerId + '.vjs-playlist .vjs-modal-dialog { width: ' + newSize + 'px !important; } ' +
+			' #' + playerId + '.vjs-playlist .vjs-control-bar, #' + playerId + '.vjs-playlist .vjs-tech { width: ' + newSize + 'px !important; } ' +
+			' #' + playerId + '.vjs-playlist .vjs-big-play-button, #' + playerId + '.vjs-playlist .vjs-loading-spinner { left: ' + Math.round(newSize / 2) + 'px !important; } ' +
+			' #' + playerId + ' .vimeoFrame { width: ' + newSize + 'px !important; } ' +
+			' #' + playerId + ' .vimeoFrame.vimeoHidden { padding-bottom: 0 !important; } ';
 
 		  style.setAttribute('type', 'text/css');
 		  document.getElementsByTagName('head')[0].appendChild(style);
@@ -232,7 +235,20 @@ const playVideo = (player_id, idx, autoPlay) => {
 	if (!player_id)	{
 		player_id = player.id_;
 	}
+	players[player_id].pause();
+	players[player_id].error(null);
 	let video = { type: videos[player_id][idx].type, src: videos[player_id][idx].src};
+
+	let curVideoId = 'vimeo_wrapper_' + player_id;
+	let vimeos = players[player_id].el().getElementsByClassName('vimeoFrame');
+	for (let i = 0; i < vimeos.length; i++)
+	{
+		vimeos[i].classList.add('vimeoHidden');
+	}
+	if (video.type == 'video/vimeo')
+	{
+		document.getElementById(curVideoId).classList.remove('vimeoHidden');
+	}
 
 	players[player_id].src(video);
 	players[player_id].poster(videos[player_id][idx].thumbnail);
